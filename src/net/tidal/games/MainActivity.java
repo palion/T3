@@ -4,11 +4,13 @@ import java.util.ArrayList;
 
 import net.tidal.R;
 import android.app.Activity;
+import android.content.res.Resources;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 public class MainActivity extends Activity {
@@ -16,8 +18,11 @@ public class MainActivity extends Activity {
 	private int turn = 1;
 	private int winningCombo[] = new int[3];
 	private ArrayList<Integer> playerSelections;
-	private int backGroundColor = 0;
 	private int occupiedBitMask = 0;
+
+	private Drawable surfboard;
+	private Drawable wave;
+	private Drawable icon;
 
 	private static final int[] BUTTONS = {
 		R.id.Button1, R.id.Button2, R.id.Button3, R.id.Button4, R.id.Button5,
@@ -29,6 +34,11 @@ public class MainActivity extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
+		Resources res = getBaseContext().getResources();
+		surfboard = res.getDrawable(R.drawable.surfboard);
+		wave = res.getDrawable(R.drawable.wave);
+		icon = res.getDrawable(R.drawable.icon);
+
 		playerSelections = new ArrayList<Integer>(9);
 		for(int i = 0; i < 9; i++){
 			playerSelections.add(i, 0);
@@ -52,16 +62,16 @@ public class MainActivity extends Activity {
 
 	private void takeTurn(View view, int index) {
 
-		Button button = (Button)view;
+		ImageButton button = (ImageButton)view;
 
 		if((occupiedBitMask & (1 << index)) == 0 && getWinner() == 0){
 
 			playerSelections.set(index, turn);
 
 			if(turn == 1){
-				button.setText(view.getContext().getString(R.string.x));
+				button.setImageDrawable(surfboard);//setText(view.getContext().getString(R.string.x));
 			}else{
-				button.setText(view.getContext().getString(R.string.o));
+				button.setImageDrawable(wave);//setText(view.getContext().getString(R.string.o));
 			}
 
 			occupiedBitMask = occupiedBitMask + (1 << index);
@@ -84,7 +94,7 @@ public class MainActivity extends Activity {
 	}
 
 	private void reset(View view) {
-		updateWinningButtonColor(Color.GRAY);
+		updateWinningButtonColor(0);
 		turn = 1;
 		winningCombo = new int[3];
 		playerSelections = new ArrayList<Integer>(9);
@@ -109,8 +119,8 @@ public class MainActivity extends Activity {
 	}
 
 	private void resetButtonTextByResourceId(int id){
-		Button b = (Button)findViewById(id);
-		b.setText("");
+		ImageButton b = (ImageButton)findViewById(id);
+		b.setImageDrawable(icon);
 	}
 
 	private String getStatus(View v){
@@ -141,11 +151,11 @@ public class MainActivity extends Activity {
 	}
 
 	private void updateWinningButtonColor(int color){
-		Button button0 = (Button)findViewById(BUTTONS[winningCombo[0]]);
+		ImageButton button0 = (ImageButton)findViewById(BUTTONS[winningCombo[0]]);
 		button0.setBackgroundColor(color);
-		Button button1 = (Button)findViewById(BUTTONS[winningCombo[1]]);
+		ImageButton button1 = (ImageButton)findViewById(BUTTONS[winningCombo[1]]);
 		button1.setBackgroundColor(color);
-		Button button2 = (Button)findViewById(BUTTONS[winningCombo[2]]);
+		ImageButton button2 = (ImageButton)findViewById(BUTTONS[winningCombo[2]]);
 		button2.setBackgroundColor(color);
 	}
 
